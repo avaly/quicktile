@@ -160,14 +160,14 @@ class GravityLayout(object):  # pylint: disable=too-few-public-methods
         offset_x = w * self.GRAVITIES[gravity][0]
         offset_y = h * self.GRAVITIES[gravity][1]
 
-        return (x - offset_x + self.margin_x,
-                y - offset_y + self.margin_y,
-                w - (self.margin_x * 2),
-                h - (self.margin_y * 2))
+        return (round(x - offset_x + self.margin_x, 3),
+                round(y - offset_y + self.margin_y, 3),
+                round(w - (self.margin_x * 2), 3),
+                round(h - (self.margin_y * 2), 3))
 
 #: Number of columns to base generated L{POSITIONS} presets on
 #: @todo: Store COLUMN_COUNT in quicktile.cfg for easy editing
-COLUMN_COUNT = 3
+COLUMN_COUNT = 8
 
 def _make_positions():
     """Generate the classic WinSplit Revolution tiling presets
@@ -178,10 +178,10 @@ def _make_positions():
     # TODO: Plumb GravityLayout.__init__'s arguments into the config file
     gvlay = GravityLayout()
     col_width = 1.0 / COLUMN_COUNT
-    cycle_steps = tuple(col_width * x for x in range(1, COLUMN_COUNT))
+    cycle_steps = tuple(round(col_width * x, 3) for x in range(1, COLUMN_COUNT))
 
-    edge_steps = (1.0,) + cycle_steps
-    corner_steps = (0.5,) + cycle_steps
+    edge_steps = sorted((1.0,) + cycle_steps)
+    corner_steps = sorted(cycle_steps)
 
     positions = {
         'middle': [gvlay(width, 1, 'middle') for width in edge_steps],
@@ -190,7 +190,7 @@ def _make_positions():
     for grav in ('top', 'bottom'):
         positions[grav] = [gvlay(width, 0.5, grav) for width in edge_steps]
     for grav in ('left', 'right'):
-        positions[grav] = [gvlay(width, 1, grav) for width in corner_steps]
+        positions[grav] = [gvlay(width, 1, grav) for width in edge_steps]
     for grav in ('top-left', 'top-right', 'bottom-left', 'bottom-right'):
         positions[grav] = [gvlay(width, 0.5, grav) for width in corner_steps]
 
