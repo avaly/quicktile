@@ -791,6 +791,10 @@ class WindowManager(object):
         new_x += monitor.x
         new_y += monitor.y
 
+        # HACK for the Ubuntu bug that windows get positioned 10px lower than
+        # what the coordinates indicate.
+        geom.height -= 10
+
         logging.debug(" Repositioning to (%d, %d, %d, %d)\n",
                 new_x, new_y, geom.width, geom.height)
 
